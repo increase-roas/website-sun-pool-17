@@ -44,201 +44,351 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
       :root { color-scheme: light; }
       * { box-sizing: border-box; margin: 0; padding: 0; }
       body {
-        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-        background: var(--surfaceAlt);
+        min-height: 100vh;
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        background: #f3f4f6;
         color: var(--ink);
-        line-height: 1.5;
+        line-height: 1.45;
       }
       header {
-        background: linear-gradient(180deg, var(--primary), var(--deep));
-        color: #fff; padding: 18px 20px;
-        display: flex; align-items: center; justify-content: space-between; gap: 16px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        min-height: 56px;
+        padding: 10px 20px;
+        background: #fff;
+        border-bottom: 1px solid #e5e7eb;
       }
-      header h1 { font-size: 1.05rem; font-weight: 700; }
-      header .who { font-size: .78rem; opacity: .8; }
-      main { max-width: 1100px; margin: 0 auto; padding: 24px 20px 80px; }
+      header .brand { min-width: 0; }
+      header .kicker {
+        font-size: .68rem;
+        font-weight: 600;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        color: var(--inkMuted);
+      }
+      header h1 {
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: -.01em;
+        color: var(--night);
+      }
+      header .who {
+        font-size: .8rem;
+        color: var(--inkMuted);
+        text-align: right;
+      }
+      main { max-width: 1120px; margin: 0 auto; padding: 28px 20px 72px; }
       .card {
-        background: #fff; border: 1px solid #e3e8f0; border-radius: 14px;
-        padding: 20px; margin-bottom: 20px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px 22px 22px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 2px rgb(15 23 42 / .04);
       }
-      h2 { font-size: 1rem; margin-bottom: 12px; color: var(--deep); }
-      label { display: block; font-size: .72rem; font-weight: 600; text-transform: uppercase;
-              letter-spacing: .08em; color: var(--inkMuted); margin: 12px 0 4px; }
+      .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .card-head h2, h2 {
+        font-size: .95rem;
+        font-weight: 600;
+        letter-spacing: -.01em;
+        color: var(--night);
+        margin-bottom: 0;
+      }
+      h2 { margin-bottom: 14px; }
+      .block {
+        border: 0;
+        margin: 0 0 22px;
+        padding: 0 0 22px;
+        border-bottom: 1px solid #eef0f3;
+      }
+      .block:last-of-type { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+      .block legend {
+        width: 100%;
+        margin-bottom: 12px;
+        font-size: .72rem;
+        font-weight: 600;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: var(--inkMuted);
+      }
+      label {
+        display: block;
+        font-size: .78rem;
+        font-weight: 600;
+        color: #3f4b5f;
+        margin: 0 0 6px;
+      }
       input, select, textarea {
-        width: 100%; padding: 10px 12px; font: inherit; font-size: 16px;
-        border: 1px solid #d6dceb; border-radius: 9px; background: #fff; color: var(--ink);
+        width: 100%;
+        padding: 9px 11px;
+        font: inherit;
+        font-size: .95rem;
+        border: 1px solid #d5dae3;
+        border-radius: 8px;
+        background: #fff;
+        color: var(--ink);
       }
-      textarea { resize: vertical; min-height: 64px; }
+      input:focus, select:focus, textarea:focus {
+        outline: 2px solid color-mix(in srgb, var(--primary) 35%, #93c5fd);
+        outline-offset: 1px;
+        border-color: color-mix(in srgb, var(--primary) 45%, #94a3b8);
+      }
+      textarea { resize: vertical; min-height: 72px; }
       button {
-        font: inherit; font-weight: 700; cursor: pointer; border: none;
-        border-radius: 9px; padding: 11px 18px; min-height: 44px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        border-radius: 8px;
+        padding: 9px 14px;
+        min-height: 40px;
       }
-      .primary { background: var(--accent); color: var(--night); }
-      .ghost { background: #fff; color: var(--deep); border: 1px solid #d6dceb; }
+      .primary { background: var(--night); color: #fff; }
+      .primary:hover { filter: brightness(1.08); }
+      .ghost { background: #fff; color: var(--deep); border: 1px solid #d5dae3; }
+      .ghost:hover { background: #f8fafc; }
       .danger { background: #fff; color: var(--urgent); border: 1px solid #f0c9c7; }
+      .danger:hover { background: #fef6f5; }
+      .btn-sm { padding: 5px 10px; min-height: 0; font-size: .78rem; font-weight: 600; }
       .row { display: grid; gap: 12px; grid-template-columns: 1fr; }
-      @media (min-width: 700px) { .row.two { grid-template-columns: 1fr 1fr; } .row.three { grid-template-columns: 1fr 1fr 1fr; } }
-      table { width: 100%; border-collapse: collapse; font-size: .88rem; }
-      th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #eef1f7; vertical-align: middle; }
-      th { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: var(--inkMuted); }
-      .pill { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .7rem; font-weight: 700; }
-      .pill.available { background: #e6f6ed; color: #12603a; }
-      .pill.draft { background: #eef1f7; color: #52607d; }
-      .pill.sold, .pill.pending { background: #232a3a; color: #fff; }
-      .pill.hidden { background: #fdf0e6; color: #8a5a1a; }
-      .orphan { background: #fdecea; color: #a3231b; border: 1px solid #f3c7c3;
-                padding: 8px 12px; border-radius: 9px; font-size: .8rem; margin-bottom: 12px; }
-      .msg { padding: 11px 14px; border-radius: 9px; font-size: .86rem; margin-bottom: 14px; }
-      .msg.err { background: #fdecea; color: #a3231b; }
-      .msg.ok { background: #e6f6ed; color: #12603a; }
-      .hint { font-size: .78rem; color: var(--inkMuted); margin-top: 6px; }
+      @media (min-width: 700px) {
+        .row.two { grid-template-columns: 1fr 1fr; }
+        .row.three { grid-template-columns: 1fr 1fr 1fr; }
+      }
+      .table-wrap { overflow-x: auto; margin: 0 -6px; }
+      table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+      th, td { text-align: left; padding: 11px 8px; border-bottom: 1px solid #eef0f3; vertical-align: middle; }
+      th {
+        font-size: .68rem;
+        font-weight: 600;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+        color: var(--inkMuted);
+      }
+      tbody tr:hover { background: #f8fafc; }
+      .photo img, .photo-empty {
+        display: block;
+        width: 48px;
+        height: 36px;
+        border-radius: 6px;
+        object-fit: cover;
+        background: #eef1f5;
+        border: 1px solid #e5e7eb;
+      }
+      .name { font-weight: 600; color: var(--night); }
+      .meta { font-size: .72rem; color: var(--inkMuted); margin-top: 2px; }
+      .meta.good { color: #17643d; }
+      .meta.bad { color: #a3231b; }
+      .status-cell select { min-width: 132px; padding: 6px 8px; font-size: .8rem; }
+      .row-actions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+      .orphan { background: #fef4f3; color: #9a2b24; border: 1px solid #f3c7c3;
+                padding: 10px 12px; border-radius: 8px; font-size: .82rem; margin-bottom: 12px; }
+      .msg { padding: 10px 12px; border-radius: 8px; font-size: .84rem; margin-bottom: 14px; }
+      .msg.err { background: #fef4f3; color: #9a2b24; }
+      .msg.ok { background: #eef8f1; color: #17643d; }
+      .hint { font-size: .75rem; color: var(--inkMuted); margin-top: 6px; }
       .hidden { display: none !important; }
-      .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-      .login-wrap { max-width: 380px; margin: 60px auto; }
-      .check-row { display: flex; align-items: center; gap: 10px; margin: 16px 0 4px; }
-      .check-row input { width: auto; }
-      .check-row label { margin: 0; text-transform: none; letter-spacing: 0; font-size: .88rem; color: var(--ink); }
-      .gallery-list { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); margin: 10px 0 4px; }
-      .gallery-item { position: relative; border: 1px solid #e3e8f0; border-radius: 9px; overflow: hidden; background: #f6f8fb; }
-      .gallery-item img { display: block; width: 100%; height: 90px; object-fit: cover; }
-      .gallery-item button { position: absolute; top: 6px; right: 6px; padding: 4px 8px; min-height: 0; font-size: .68rem; }
+      .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+      .login-wrap { max-width: 400px; margin: 72px auto; }
+      .login-wrap .card { padding: 28px 28px 26px; }
+      .login-wrap h2 { font-size: 1.15rem; margin-bottom: 6px; }
+      .login-wrap .lead { font-size: .86rem; color: var(--inkMuted); margin-bottom: 18px; }
+      .login-wrap .primary { width: 100%; }
+      .check-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f8fafc; }
+      .check-row input { width: auto; margin-top: 2px; }
+      .check-row label { margin: 0; font-size: .88rem; font-weight: 500; color: var(--ink); }
+      .gallery-list { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); margin: 10px 0 4px; }
+      .gallery-item { position: relative; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: #f3f4f6; }
+      .gallery-item img { display: block; width: 100%; height: 80px; object-fit: cover; }
+      .gallery-item button { position: absolute; top: 6px; right: 6px; padding: 3px 7px; min-height: 0; font-size: .68rem; }
+      .empty { color: var(--inkMuted); padding: 18px 8px; }
+      .stack { margin-top: 12px; }
     </style>
   </head>
 
   <body>
     <header>
-      <h1>Inventory admin</h1>
+      <div class="brand">
+        <div class="kicker">{site.identity.name}</div>
+        <h1>Inventory</h1>
+      </div>
       <div>
-        <div class="who">{site.identity.name}</div>
-        <button id="logout" class="ghost hidden" style="padding:6px 12px;min-height:0;font-size:.78rem">Sign out</button>
+        <div class="who" id="headerMeta">Dealer desk</div>
+        <button id="logout" class="ghost btn-sm hidden">Sign out</button>
       </div>
     </header>
 
     <main>
-      <!-- LOGIN -->
       <section id="login" class="login-wrap">
         <div class="card">
           <h2>Sign in</h2>
+          <p class="lead">Use the website admin password from Launchpad.</p>
           <div id="loginMsg"></div>
           <form id="loginForm">
             <label for="password">Password</label>
             <input id="password" type="password" autocomplete="current-password" required />
             <div class="actions">
-              <button class="primary" type="submit">Sign in</button>
+              <button class="primary" type="submit">Continue</button>
             </div>
           </form>
         </div>
       </section>
 
-      <!-- PANEL -->
       <section id="panel" class="hidden">
         <div id="globalMsg"></div>
 
         <div class="card">
-          <h2>Products</h2>
+          <div class="card-head">
+            <h2>Floor units</h2>
+            <button type="button" class="ghost btn-sm" id="newProduct">Add product</button>
+          </div>
           <div id="orphanNotice" class="orphan hidden"></div>
-          <table>
-            <thead>
-              <tr>
-                <th>Product</th><th>Category</th><th>Status</th><th>Price</th><th>Monthly</th><th>Qty</th><th></th>
-              </tr>
-            </thead>
-            <tbody id="rows"><tr><td colspan="7">Loading…</td></tr></tbody>
-          </table>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Price</th>
+                  <th>Monthly</th>
+                  <th>Qty</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="rows"><tr><td class="empty" colspan="8">Loading…</td></tr></tbody>
+            </table>
+          </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="formCard">
           <h2 id="formTitle">Add a product</h2>
           <div id="formMsg"></div>
           <form id="productForm">
-            <div class="row two">
-              <div>
-                <label for="inventory_name">Product name</label>
-                <input id="inventory_name" required />
+            <fieldset class="block">
+              <legend>Product</legend>
+              <div class="row two">
+                <div>
+                  <label for="inventory_name">Name</label>
+                  <input id="inventory_name" required />
+                </div>
+                <div>
+                  <label for="slug">URL slug</label>
+                  <input id="slug" placeholder="Leave blank to generate from the name" />
+                </div>
               </div>
-              <div>
-                <label for="slug">URL slug <span style="text-transform:none;letter-spacing:0">(blank = from name)</span></label>
-                <input id="slug" />
+              <div class="row three stack">
+                <div>
+                  <label for="category">Category</label>
+                  <select id="category" required disabled={enabledCategories.length === 0}>
+                    {enabledCategories.length === 0 ? (
+                      <option value="">No product groups enabled</option>
+                    ) : (
+                      enabledCategories.map((c) => <option value={c.slug}>{c.label}</option>)
+                    )}
+                  </select>
+                  <p class="hint">Only categories enabled in Launchpad Content.</p>
+                </div>
+                <div>
+                  <label for="status">Status</label>
+                  <select id="status">
+                    <option value="draft">Draft (hidden)</option>
+                    <option value="available">Available</option>
+                    <option value="pending">Sale pending</option>
+                    <option value="sold">Sold</option>
+                    <option value="hidden">Hidden</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="quantity">Quantity</label>
+                  <input id="quantity" type="number" min="0" value="1" />
+                </div>
               </div>
-            </div>
+            </fieldset>
 
-            <div class="row three">
-              <div>
-                <label for="category">Category</label>
-                <select id="category" required disabled={enabledCategories.length === 0}>
-                  {enabledCategories.length === 0 ? (
-                    <option value="">No product groups enabled</option>
-                  ) : (
-                    enabledCategories.map((c) => <option value={c.slug}>{c.label}</option>)
-                  )}
-                </select>
-                <p class="hint">Only what this site sells. Turn groups on in Launchpad → Configuration → Content.</p>
+            <fieldset class="block">
+              <legend>Pricing</legend>
+              <div class="row three">
+                <div><label for="price">Cash price ($)</label><input id="price" type="number" min="0" /></div>
+                <div><label for="monthly_payment">Monthly ($)</label><input id="monthly_payment" type="number" min="0" /></div>
+                <div><label for="sort_order">Sort order</label><input id="sort_order" type="number" value="0" /></div>
               </div>
-              <div>
-                <label for="status">Status</label>
-                <select id="status">
-                  <option value="draft">Draft (hidden)</option>
-                  <option value="available">Available</option>
-                  <option value="pending">Sale pending</option>
-                  <option value="sold">Sold</option>
-                  <option value="hidden">Hidden</option>
-                </select>
+            </fieldset>
+
+            <fieldset class="block">
+              <legend>Photos</legend>
+              <div class="row two">
+                <div>
+                  <label for="imageFile">Main photo</label>
+                  <input id="imageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
+                  <p class="hint" id="uploadHint">JPG, PNG, WEBP or GIF, up to 6 MB.</p>
+                  <label for="primary_image">or photo URL</label>
+                  <input id="primary_image" placeholder="https://… or /images/…" />
+                </div>
+                <div>
+                  <label for="galleryFile">Gallery photo</label>
+                  <input id="galleryFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
+                  <p class="hint">Up to 20 extra views on the product page.</p>
+                  <label for="gallery_images">or gallery URLs</label>
+                  <textarea id="gallery_images" rows="3" placeholder="One URL per line"></textarea>
+                </div>
               </div>
-              <div>
-                <label for="quantity">Quantity</label>
-                <input id="quantity" type="number" min="0" value="1" />
+              <div id="galleryList" class="gallery-list"></div>
+            </fieldset>
+
+            <fieldset class="block">
+              <legend>Listing</legend>
+              <div class="check-row">
+                <input id="featured" type="checkbox" />
+                <label for="featured">Featured — show this unit first on inventory pages</label>
               </div>
-            </div>
+              <div class="row two stack">
+                <div><label for="promo_label">Badge</label><input id="promo_label" placeholder="LAST ONE" /></div>
+                <div><label for="delivery_promise">Delivery promise</label><input id="delivery_promise" placeholder="Delivery in 2 weeks" /></div>
+              </div>
+            </fieldset>
 
-            <div class="row three">
-              <div><label for="price">Cash price ($)</label><input id="price" type="number" min="0" /></div>
-              <div><label for="monthly_payment">Monthly ($)</label><input id="monthly_payment" type="number" min="0" /></div>
-              <div><label for="sort_order">Sort order</label><input id="sort_order" type="number" value="0" /></div>
-            </div>
-
-            <label for="imageFile">Main photo</label>
-            <input id="imageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
-            <p class="hint" id="uploadHint">JPG, PNG, WEBP or GIF, up to 6 MB.</p>
-            <label for="primary_image">Photo URL</label>
-            <input id="primary_image" placeholder="/images/x.webp or https://…" />
-            <p class="hint">Must start with / or https:// — a relative path 404s on product pages.</p>
-
-            <label for="galleryFile">Gallery photos</label>
-            <input id="galleryFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
-            <p class="hint">Extra views on the product page. Up to 20. Same file rules as the main photo.</p>
-            <div id="galleryList" class="gallery-list"></div>
-            <label for="gallery_images">Gallery URLs (one per line)</label>
-            <textarea id="gallery_images" rows="3" placeholder="https://… or /images/…"></textarea>
-
-            <div class="check-row">
-              <input id="featured" type="checkbox" />
-              <label for="featured">Featured — show this unit first on inventory pages</label>
-            </div>
-
-            <div class="row two">
-              <div><label for="promo_label">Badge</label><input id="promo_label" placeholder="LAST ONE" /></div>
-              <div><label for="delivery_promise">Delivery promise</label><input id="delivery_promise" placeholder="Delivery in 2 weeks" /></div>
-            </div>
-
-            <label for="quick_facts">Quick facts (one per line, first 3 show on the card)</label>
-            <textarea id="quick_facts" rows="3"></textarea>
-
-            <label for="why_bullets">Why this one (one per line)</label>
-            <textarea id="why_bullets" rows="3"></textarea>
-
-            <div class="row two">
-              <div><label for="headline">Headline</label><input id="headline" /></div>
-              <div><label for="positioning_label">Positioning label</label><input id="positioning_label" placeholder="Most popular" /></div>
-            </div>
-
-            <label for="hero_description">Short description</label>
-            <textarea id="hero_description" rows="2"></textarea>
-            <label for="long_description">Long description</label>
-            <textarea id="long_description" rows="4"></textarea>
-            <div class="row two">
-              <div><label for="best_for">Best for</label><input id="best_for" /></div>
-              <div><label for="ghl_tags">CRM tags (one per line)</label><textarea id="ghl_tags" rows="2"></textarea></div>
-            </div>
+            <fieldset class="block">
+              <legend>Copy</legend>
+              <div class="row two">
+                <div>
+                  <label for="quick_facts">Quick facts</label>
+                  <textarea id="quick_facts" rows="3" placeholder="One per line. First 3 show on the card."></textarea>
+                </div>
+                <div>
+                  <label for="why_bullets">Why this one</label>
+                  <textarea id="why_bullets" rows="3" placeholder="One per line"></textarea>
+                </div>
+              </div>
+              <div class="row two stack">
+                <div><label for="headline">Headline</label><input id="headline" /></div>
+                <div><label for="positioning_label">Positioning</label><input id="positioning_label" placeholder="Most popular" /></div>
+              </div>
+              <div class="stack">
+                <label for="hero_description">Short description</label>
+                <textarea id="hero_description" rows="2"></textarea>
+              </div>
+              <div class="stack">
+                <label for="long_description">Long description</label>
+                <textarea id="long_description" rows="4"></textarea>
+              </div>
+              <div class="row two stack">
+                <div><label for="best_for">Best for</label><input id="best_for" /></div>
+                <div><label for="ghl_tags">CRM tags</label><textarea id="ghl_tags" rows="2" placeholder="One per line"></textarea></div>
+              </div>
+            </fieldset>
 
             <div class="actions">
               <button class="primary" type="submit">Save product</button>
@@ -257,6 +407,13 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
       // Closing the tab still ends the session. Not localStorage: that
       // would survive the browser and stay readable by any later script.
       const TOKEN_KEY = 'inventory-admin-token';
+      const STATUS_LABELS = {
+        draft: 'Draft',
+        available: 'Available',
+        pending: 'Pending',
+        sold: 'Sold',
+        hidden: 'Hidden',
+      };
       let token = '';
       try { token = sessionStorage.getItem(TOKEN_KEY) || ''; } catch { /* private mode */ }
       let categories = [];
@@ -293,6 +450,17 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
 
       const lines = (v) => v.split('\n').map((s) => s.trim()).filter(Boolean);
 
+      function resetEditor() {
+        $('productForm').reset();
+        $('formTitle').textContent = 'Add a product';
+        msg($('formMsg'), '', '');
+        renderGallery();
+      }
+
+      function showEditor() {
+        $('formCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
       /* ---------- login ---------- */
       $('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -312,6 +480,11 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
         await api('?action=logout', { method: 'POST' });
         setToken('');
         show($('login'), true); show($('panel'), false); show($('logout'), false);
+      });
+
+      $('newProduct').addEventListener('click', () => {
+        resetEditor();
+        showEditor();
       });
 
       /* ---------- list ---------- */
@@ -335,7 +508,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
 
         const tbody = $('rows');
         if (!data.products.length) {
-          tbody.innerHTML = '<tr><td colspan="7">No products yet.</td></tr>';
+          tbody.innerHTML = '<tr><td class="empty" colspan="8">No products yet.</td></tr>';
           return;
         }
 
@@ -343,18 +516,34 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
         for (const p of data.products) {
           const tr = document.createElement('tr');
 
+          const photo = document.createElement('td');
+          photo.className = 'photo';
+          if (p.primary_image) {
+            const img = document.createElement('img');
+            img.src = p.primary_image;
+            img.alt = '';
+            photo.appendChild(img);
+          } else {
+            const empty = document.createElement('span');
+            empty.className = 'photo-empty';
+            photo.appendChild(empty);
+          }
+
           const name = document.createElement('td');
-          name.textContent = p.inventory_name;
+          const title = document.createElement('div');
+          title.className = 'name';
+          title.textContent = p.inventory_name;
+          name.appendChild(title);
           if (p.featured) {
             const flag = document.createElement('div');
-            flag.style.cssText = 'font-size:.72rem;color:#12603a';
-            flag.textContent = 'featured';
+            flag.className = 'meta good';
+            flag.textContent = 'Featured';
             name.appendChild(flag);
           }
           if (p.orphaned) {
             const flag = document.createElement('div');
-            flag.style.cssText = 'font-size:.72rem;color:#a3231b';
-            flag.textContent = 'not sold here any more';
+            flag.className = 'meta bad';
+            flag.textContent = 'Not sold on this site';
             name.appendChild(flag);
           }
 
@@ -362,10 +551,11 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
           cat.textContent = p.category;
 
           const status = document.createElement('td');
+          status.className = 'status-cell';
           const sel = document.createElement('select');
           for (const s of ['draft', 'available', 'pending', 'sold', 'hidden']) {
             const o = document.createElement('option');
-            o.value = s; o.textContent = s; o.selected = p.status === s;
+            o.value = s; o.textContent = STATUS_LABELS[s] || s; o.selected = p.status === s;
             sel.appendChild(o);
           }
           sel.addEventListener('change', async () => {
@@ -386,29 +576,32 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
           qty.textContent = p.quantity;
 
           const act = document.createElement('td');
+          const actions = document.createElement('div');
+          actions.className = 'row-actions';
           const edit = document.createElement('button');
-          edit.className = 'ghost'; edit.textContent = 'Edit';
-          edit.style.cssText = 'padding:6px 12px;min-height:0;font-size:.78rem;margin-right:6px';
+          edit.className = 'ghost btn-sm';
+          edit.textContent = 'Edit';
           edit.addEventListener('click', () => fill(p));
           const del = document.createElement('button');
-          del.className = 'danger'; del.textContent = 'Delete';
-          del.style.cssText = 'padding:6px 12px;min-height:0;font-size:.78rem';
+          del.className = 'danger btn-sm';
+          del.textContent = 'Delete';
           del.addEventListener('click', async () => {
             if (!confirm(`Delete "${p.inventory_name}"? It is hidden, not erased.`)) return;
             const { data: r } = await api(`?slug=${encodeURIComponent(p.slug)}`, { method: 'DELETE' });
             msg($('globalMsg'), r.ok ? 'Deleted.' : (r.error || 'Delete failed.'), r.ok ? 'ok' : 'err');
             if (r.ok) load();
           });
-          act.append(edit, del);
+          actions.append(edit, del);
+          act.appendChild(actions);
 
-          tr.append(name, cat, status, price, monthly, qty, act);
+          tr.append(photo, name, cat, status, price, monthly, qty, act);
           tbody.appendChild(tr);
         }
       }
 
       /* ---------- form ---------- */
       function fill(p) {
-        $('formTitle').textContent = `Edit: ${p.inventory_name}`;
+        $('formTitle').textContent = `Edit ${p.inventory_name}`;
         $('inventory_name').value = p.inventory_name || '';
         $('slug').value = p.slug || '';
         $('category').value = p.category || (categories[0] && categories[0].slug) || '';
@@ -431,7 +624,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
         $('hero_description').value = p.hero_description || '';
         $('long_description').value = p.long_description || '';
         $('best_for').value = p.best_for || '';
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        showEditor();
       }
 
       function galleryUrls() {
@@ -470,12 +663,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
         msg($('formMsg'), 'Uploaded.', 'ok');
       }
 
-      $('resetForm').addEventListener('click', () => {
-        $('productForm').reset();
-        $('formTitle').textContent = 'Add a product';
-        msg($('formMsg'), '', '');
-        renderGallery();
-      });
+      $('resetForm').addEventListener('click', resetEditor);
 
       $('imageFile').addEventListener('change', async () => {
         const file = $('imageFile').files[0];
@@ -528,10 +716,10 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
         };
         const { data } = await api('', { method: 'POST', body: JSON.stringify(payload) });
         if (!data.ok) { msg($('formMsg'), data.error || 'Save failed.', 'err'); return; }
-        msg($('formMsg'), 'Saved.', 'ok');
         $('productForm').reset();
         $('formTitle').textContent = 'Add a product';
         renderGallery();
+        msg($('formMsg'), 'Saved.', 'ok');
         load();
       });
 
