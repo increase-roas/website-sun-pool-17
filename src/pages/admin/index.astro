@@ -124,15 +124,16 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
       .workspace {
         height: calc(100vh - 56px);
         display: grid;
-        grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+        grid-template-columns: 320px minmax(0, 1fr);
       }
       .list-pane, .edit-pane {
+        min-width: 0;
         min-height: 0;
         display: flex;
         flex-direction: column;
         background: #fff;
       }
-      .list-pane { border-right: 1px solid #e5e7eb; }
+      .list-pane { border-right: 1px solid #e5e7eb; overflow: hidden; }
       .pane-head {
         display: flex;
         align-items: center;
@@ -154,12 +155,14 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
       #units {
         overflow: auto;
         flex: 1;
+        min-width: 0;
         padding: 0 8px 16px;
       }
       .unit {
         width: 100%;
+        min-width: 0;
         display: grid;
-        grid-template-columns: 52px minmax(0, 1fr) auto;
+        grid-template-columns: 48px minmax(0, 1fr) auto;
         gap: 10px;
         align-items: center;
         text-align: left;
@@ -171,17 +174,25 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
       }
       .unit:hover { background: #f4f6f8; }
       .unit.is-on { background: #eef3fb; }
-      .unit img, .photo-empty {
-        width: 52px;
-        height: 40px;
+      .unit-photo {
+        width: 48px;
+        height: 36px;
         border-radius: 6px;
-        object-fit: cover;
+        overflow: hidden;
         background: #eef1f5;
         border: 1px solid #e5e7eb;
-        display: block;
       }
-      .unit-name { font-weight: 600; font-size: .86rem; color: var(--night); }
-      .unit-meta { font-size: .72rem; color: var(--inkMuted); margin-top: 2px; }
+      .unit-photo img {
+        display: block;
+        width: 48px;
+        height: 36px;
+        max-width: 48px;
+        max-height: 36px;
+        object-fit: cover;
+      }
+      .unit-copy { min-width: 0; }
+      .unit-name { font-weight: 600; font-size: .86rem; color: var(--night); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .unit-meta { font-size: .72rem; color: var(--inkMuted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .unit-price { font-size: .8rem; font-weight: 600; color: var(--night); white-space: nowrap; }
       .empty-list { padding: 28px 16px; color: var(--inkMuted); font-size: .86rem; }
 
@@ -261,7 +272,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
       .check-row label { margin: 0; font-size: .86rem; font-weight: 500; }
       .gallery-list { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); margin-top: 10px; }
       .gallery-item { position: relative; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: #f3f4f6; }
-      .gallery-item img { display: block; width: 100%; height: 80px; object-fit: cover; }
+      .gallery-item img { display: block; width: 100%; max-width: 100%; height: 80px; object-fit: cover; }
       .gallery-item button { position: absolute; top: 6px; right: 6px; }
       .back { display: none; }
       @media (max-width: 899px) {
@@ -646,10 +657,16 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
           const row = document.createElement('button');
           row.type = 'button';
           row.className = 'unit' + (p.slug === selectedSlug ? ' is-on' : '');
-          const photo = p.primary_image
-            ? Object.assign(document.createElement('img'), { src: p.primary_image, alt: '' })
-            : Object.assign(document.createElement('span'), { className: 'photo-empty' });
+          const photo = document.createElement('span');
+          photo.className = 'unit-photo';
+          if (p.primary_image) {
+            const img = document.createElement('img');
+            img.src = p.primary_image;
+            img.alt = '';
+            photo.appendChild(img);
+          }
           const mid = document.createElement('div');
+          mid.className = 'unit-copy';
           const name = Object.assign(document.createElement('div'), { className: 'unit-name', textContent: p.inventory_name });
           const meta = Object.assign(document.createElement('div'), { className: 'unit-meta' });
           meta.textContent = [STATUS_LABELS[p.status] || p.status, p.category, p.featured ? 'Featured' : '']
