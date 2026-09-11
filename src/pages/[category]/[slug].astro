@@ -55,8 +55,12 @@ const gallery = product
 const { cash, monthly, askForPrice } = product
   ? pricingFor(product)
   : { cash: null, monthly: null, askForPrice: false };
-const badge = product ? product.promoLabel || statusLabel(product.status, product.quantity) : null;
 const muted = product ? isMutedStatus(product.status) : false;
+const badge = product
+  ? product.promoLabel ||
+    (!muted && product.featured ? 'Featured' : '') ||
+    statusLabel(product.status, product.quantity)
+  : null;
 
 // Product + Offer, built from the row rather than hand-written per page.
 const productSchema =

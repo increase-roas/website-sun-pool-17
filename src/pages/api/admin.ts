@@ -245,7 +245,14 @@ export const POST: APIRoute = async ({ request, url }) => {
   if (action === 'login') {
     const body = (await request.json().catch(() => ({}))) as { password?: unknown };
     if (!adminConfigured()) {
-      return json({ ok: false, error: 'Admin is not configured.' }, 503);
+      return json(
+        {
+          ok: false,
+          error:
+            'Website admin password is not set. Add it in Launchpad → Integrations, then publish again.',
+        },
+        503,
+      );
     }
     if (body.password !== getEnv().ADMIN_PASSWORD) {
       return json({ ok: false, error: 'Invalid password.' }, 401);
@@ -384,7 +391,18 @@ export const POST: APIRoute = async ({ request, url }) => {
 /* GET — list                                                          */
 /* ================================================================== */
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async ({ request, url }) => {
+  if (url.searchParams.get('action') === 'status') {
+    return json({
+      ok: true,
+      configured: adminConfigured(),
+      imagesConfigured: Boolean(r2PublicBase()),
+      error: adminConfigured()
+        ? undefined
+        : 'Website admin password is not set. Add it in Launchpad → Integrations, then publish again.',
+    });
+  }
+
   const db = getDb();
   if (!db) return json({ ok: false, error: 'Database is not configured.' }, 503);
 
@@ -396,7 +414,7 @@ export const GET: APIRoute = async ({ request }) => {
   // find or clean up their own data after a config change. They are marked
   // `orphaned` so the panel can say so out loud.
   const result = await db
-    .prepare("SELECT * FROM products WHERE status != 'deleted' ORDER BY sort_order ASC, id ASC")
+    .prepare("SELECT * FROM products WHERE status != 'deleted' ORDER BY featured DESC, sort_order ASC, id ASC")
     .all<Record<string, unknown>>();
 
   const products = (result.results ?? []).map((row) => ({

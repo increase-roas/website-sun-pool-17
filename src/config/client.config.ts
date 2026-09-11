@@ -636,7 +636,7 @@ export const rawClientConfig: ClientConfigInput = {
     "d1BindingName": "DB",
     "r2BindingName": "PRODUCT_IMAGES",
     "ghl": {
-      "enabled": false
+      "enabled": true
     },
     "meta": {
       "enabled": false

@@ -246,7 +246,7 @@ export async function listProducts(
     binds.push(...PUBLIC_STATUSES);
   }
 
-  let sql = `SELECT * FROM products WHERE ${where.join(' AND ')} ORDER BY sort_order ASC, id ASC`;
+  let sql = `SELECT * FROM products WHERE ${where.join(' AND ')} ORDER BY featured DESC, sort_order ASC, id ASC`;
   if (options.limit !== undefined) {
     sql += ' LIMIT ?';
     binds.push(options.limit);

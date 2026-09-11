@@ -95,6 +95,13 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
       .hidden { display: none !important; }
       .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
       .login-wrap { max-width: 380px; margin: 60px auto; }
+      .check-row { display: flex; align-items: center; gap: 10px; margin: 16px 0 4px; }
+      .check-row input { width: auto; }
+      .check-row label { margin: 0; text-transform: none; letter-spacing: 0; font-size: .88rem; color: var(--ink); }
+      .gallery-list { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); margin: 10px 0 4px; }
+      .gallery-item { position: relative; border: 1px solid #e3e8f0; border-radius: 9px; overflow: hidden; background: #f6f8fb; }
+      .gallery-item img { display: block; width: 100%; height: 90px; object-fit: cover; }
+      .gallery-item button { position: absolute; top: 6px; right: 6px; padding: 4px 8px; min-height: 0; font-size: .68rem; }
     </style>
   </head>
 
@@ -158,10 +165,14 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
             <div class="row three">
               <div>
                 <label for="category">Category</label>
-                <select id="category" required>
-                  {enabledCategories.map((c) => <option value={c.slug}>{c.label}</option>)}
+                <select id="category" required disabled={enabledCategories.length === 0}>
+                  {enabledCategories.length === 0 ? (
+                    <option value="">No product groups enabled</option>
+                  ) : (
+                    enabledCategories.map((c) => <option value={c.slug}>{c.label}</option>)
+                  )}
                 </select>
-                <p class="hint">Only what this site sells. Add more in client.config.ts.</p>
+                <p class="hint">Only what this site sells. Turn groups on in Launchpad → Configuration → Content.</p>
               </div>
               <div>
                 <label for="status">Status</label>
@@ -191,6 +202,18 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
             <label for="primary_image">Photo URL</label>
             <input id="primary_image" placeholder="/images/x.webp or https://…" />
             <p class="hint">Must start with / or https:// — a relative path 404s on product pages.</p>
+
+            <label for="galleryFile">Gallery photos</label>
+            <input id="galleryFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
+            <p class="hint">Extra views on the product page. Up to 20. Same file rules as the main photo.</p>
+            <div id="galleryList" class="gallery-list"></div>
+            <label for="gallery_images">Gallery URLs (one per line)</label>
+            <textarea id="gallery_images" rows="3" placeholder="https://… or /images/…"></textarea>
+
+            <div class="check-row">
+              <input id="featured" type="checkbox" />
+              <label for="featured">Featured — show this unit first on inventory pages</label>
+            </div>
 
             <div class="row two">
               <div><label for="promo_label">Badge</label><input id="promo_label" placeholder="LAST ONE" /></div>
@@ -230,14 +253,24 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
         admin panel is internal, so there is nothing to gain from bundling
         it, and inlining keeps this page free of build-time dependencies. */}
     <script is:inline>
-      // Token lives in memory only. Not localStorage: a persisted admin
-      // token survives the tab and is readable by any script that gets on
-      // the page. Closing the tab ends the session here.
+      // sessionStorage keeps the token across refresh in this tab only.
+      // Closing the tab still ends the session. Not localStorage: that
+      // would survive the browser and stay readable by any later script.
+      const TOKEN_KEY = 'inventory-admin-token';
       let token = '';
+      try { token = sessionStorage.getItem(TOKEN_KEY) || ''; } catch { /* private mode */ }
       let categories = [];
 
       const $ = (id) => document.getElementById(id);
       const show = (el, on) => el.classList.toggle('hidden', !on);
+
+      function setToken(value) {
+        token = value;
+        try {
+          if (value) sessionStorage.setItem(TOKEN_KEY, value);
+          else sessionStorage.removeItem(TOKEN_KEY);
+        } catch { /* private mode */ }
+      }
 
       function msg(target, text, kind) {
         target.innerHTML = text ? `<div class="msg ${kind}">${text}</div>` : '';
@@ -254,7 +287,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
         });
         let data = {};
         try { data = await res.json(); } catch { /* non-JSON */ }
-        if (res.status === 401) { token = ''; show($('login'), true); show($('panel'), false); show($('logout'), false); }
+        if (res.status === 401) { setToken(''); show($('login'), true); show($('panel'), false); show($('logout'), false); }
         return { status: res.status, data };
       }
 
@@ -269,7 +302,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
           body: JSON.stringify({ password: $('password').value }),
         });
         if (!data.ok) { msg($('loginMsg'), data.error || 'Sign in failed.', 'err'); return; }
-        token = data.token;
+        setToken(data.token);
         $('password').value = '';
         show($('login'), false); show($('panel'), true); show($('logout'), true);
         load();
@@ -277,7 +310,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
 
       $('logout').addEventListener('click', async () => {
         await api('?action=logout', { method: 'POST' });
-        token = '';
+        setToken('');
         show($('login'), true); show($('panel'), false); show($('logout'), false);
       });
 
@@ -296,7 +329,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
         if (orphans.length) {
           $('orphanNotice').textContent =
             `${orphans.length} product${orphans.length === 1 ? ' sits' : 's sit'} in a category this site no longer sells. ` +
-            `They are invisible to customers. Delete them, or re-enable the category in client.config.ts.`;
+            `They are invisible to customers. Delete them, or turn the category back on in Launchpad → Configuration → Content.`;
         }
         show($('orphanNotice'), orphans.length > 0);
 
@@ -312,6 +345,12 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
 
           const name = document.createElement('td');
           name.textContent = p.inventory_name;
+          if (p.featured) {
+            const flag = document.createElement('div');
+            flag.style.cssText = 'font-size:.72rem;color:#12603a';
+            flag.textContent = 'featured';
+            name.appendChild(flag);
+          }
           if (p.orphaned) {
             const flag = document.createElement('div');
             flag.style.cssText = 'font-size:.72rem;color:#a3231b';
@@ -335,6 +374,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
               body: JSON.stringify({ slug: p.slug, status: sel.value }),
             });
             msg($('globalMsg'), r.ok ? `Updated ${p.inventory_name}.` : (r.error || 'Update failed.'), r.ok ? 'ok' : 'err');
+            if (r.ok) load();
           });
           status.appendChild(sel);
 
@@ -378,6 +418,9 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
         $('monthly_payment').value = p.monthly_payment || '';
         $('sort_order').value = p.sort_order ?? 0;
         $('primary_image').value = p.primary_image || '';
+        $('gallery_images').value = (p.gallery_images || []).join('\n');
+        $('featured').checked = Boolean(Number(p.featured));
+        renderGallery();
         $('promo_label').value = p.promo_label || '';
         $('delivery_promise').value = p.delivery_promise || '';
         $('quick_facts').value = (p.quick_facts || []).join('\n');
@@ -391,23 +434,72 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
       }
 
-      $('resetForm').addEventListener('click', () => {
-        $('productForm').reset();
-        $('formTitle').textContent = 'Add a product';
-        msg($('formMsg'), '', '');
-      });
+      function galleryUrls() {
+        return lines($('gallery_images').value);
+      }
 
-      $('imageFile').addEventListener('change', async () => {
-        const file = $('imageFile').files[0];
-        if (!file) return;
+      function renderGallery() {
+        const list = $('galleryList');
+        list.innerHTML = '';
+        for (const url of galleryUrls()) {
+          const item = document.createElement('div');
+          item.className = 'gallery-item';
+          const img = document.createElement('img');
+          img.src = url;
+          img.alt = '';
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.className = 'danger';
+          remove.textContent = 'Remove';
+          remove.addEventListener('click', () => {
+            $('gallery_images').value = galleryUrls().filter((item) => item !== url).join('\n');
+            renderGallery();
+          });
+          item.append(img, remove);
+          list.appendChild(item);
+        }
+      }
+
+      async function uploadImage(file, onUrl) {
         msg($('formMsg'), 'Uploading…', 'ok');
         const fd = new FormData();
         fd.append('image', file);
         const { data } = await api('?action=upload', { method: 'POST', body: fd });
         if (!data.ok) { msg($('formMsg'), data.error || 'Upload failed.', 'err'); return; }
-        $('primary_image').value = data.url;
-        msg($('formMsg'), 'Uploaded. URL filled in below.', 'ok');
+        onUrl(data.url);
+        msg($('formMsg'), 'Uploaded.', 'ok');
+      }
+
+      $('resetForm').addEventListener('click', () => {
+        $('productForm').reset();
+        $('formTitle').textContent = 'Add a product';
+        msg($('formMsg'), '', '');
+        renderGallery();
       });
+
+      $('imageFile').addEventListener('change', async () => {
+        const file = $('imageFile').files[0];
+        if (!file) return;
+        await uploadImage(file, (url) => { $('primary_image').value = url; });
+        $('imageFile').value = '';
+      });
+
+      $('galleryFile').addEventListener('change', async () => {
+        const file = $('galleryFile').files[0];
+        if (!file) return;
+        if (galleryUrls().length >= 20) {
+          msg($('formMsg'), 'A product can have 20 gallery photos.', 'err');
+          $('galleryFile').value = '';
+          return;
+        }
+        await uploadImage(file, (url) => {
+          $('gallery_images').value = [...galleryUrls(), url].join('\n');
+          renderGallery();
+        });
+        $('galleryFile').value = '';
+      });
+
+      $('gallery_images').addEventListener('input', renderGallery);
 
       $('productForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -421,6 +513,8 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
           monthly_payment: $('monthly_payment').value,
           sort_order: $('sort_order').value,
           primary_image: $('primary_image').value,
+          gallery_images: galleryUrls(),
+          featured: $('featured').checked,
           promo_label: $('promo_label').value,
           delivery_promise: $('delivery_promise').value,
           quick_facts: lines($('quick_facts').value),
@@ -437,8 +531,19 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
         msg($('formMsg'), 'Saved.', 'ok');
         $('productForm').reset();
         $('formTitle').textContent = 'Add a product';
+        renderGallery();
         load();
       });
+
+      (async function boot() {
+        const { data } = await api('?action=status');
+        if (data && data.configured === false) {
+          msg($('loginMsg'), data.error || 'Website admin password is not set. Add it in Launchpad → Integrations, then publish again.', 'err');
+        }
+        if (!token) return;
+        show($('login'), false); show($('panel'), true); show($('logout'), true);
+        load();
+      })();
     </script>
   </body>
 </html>

@@ -38,8 +38,11 @@ const financingLink = financingHref ?? (site.financing ? '/financing' : null);
 
 const image = assetOrWarn(product.primaryImage, `product "${product.slug}"`);
 const { cash, monthly, askForPrice } = pricingFor(product);
-const badge = product.promoLabel || statusLabel(product.status, product.quantity);
 const muted = isMutedStatus(product.status);
+const badge =
+  product.promoLabel ||
+  (!muted && product.featured ? 'Featured' : '') ||
+  statusLabel(product.status, product.quantity);
 const href = `${product.categoryHref}/${product.slug}`;
 
 // Up to three quick facts render as the pill row, matching the live card.
