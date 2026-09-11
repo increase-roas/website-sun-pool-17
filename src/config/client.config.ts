@@ -113,10 +113,10 @@ export const rawClientConfig: ClientConfigInput = {
       "onDarkMuted": "#9BCFC9"
     },
     "fonts": {
-      "display": "Outfit",
-      "body": "Outfit",
+      "display": "Manrope",
+      "body": "Manrope",
       "mono": "Spline Sans Mono",
-      "googleFontsHref": "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;700&display=swap"
+      "googleFontsHref": "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Spline+Sans+Mono:wght@400;500;700&display=swap"
     },
     "logos": {
       "nav": "https://pub-17e311eaecb5458ab28a18fbddcf65a8.r2.dev/clients/17-sun-pool-spa-supply/astro/navLogo-82278ee5716f7b8a373c952fb7dea8856548541160095f7b3c6584e6cf70e031-80d96e3b27f845c5a859862bea9e71e6.webp",

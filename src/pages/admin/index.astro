@@ -30,7 +30,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
     <meta name="robots" content="noindex, nofollow" />
     <title>Inventory — {site.identity.name}</title>
     <link rel="icon" href={site.brand.logos.favicon} />
-    <style define:vars={{
+    <style is:global define:vars={{
       primary: site.brand.colors.primary,
       deep: site.brand.colors.deep,
       night: site.brand.colors.night,
@@ -177,18 +177,12 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
       .unit-photo {
         width: 48px;
         height: 36px;
+        min-width: 48px;
+        max-width: 48px;
         border-radius: 6px;
         overflow: hidden;
-        background: #eef1f5;
+        background: #eef1f5 center / cover no-repeat;
         border: 1px solid #e5e7eb;
-      }
-      .unit-photo img {
-        display: block;
-        width: 48px;
-        height: 36px;
-        max-width: 48px;
-        max-height: 36px;
-        object-fit: cover;
       }
       .unit-copy { min-width: 0; }
       .unit-name { font-weight: 600; font-size: .86rem; color: var(--night); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -659,11 +653,10 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
           row.className = 'unit' + (p.slug === selectedSlug ? ' is-on' : '');
           const photo = document.createElement('span');
           photo.className = 'unit-photo';
+          photo.setAttribute('aria-hidden', 'true');
+          photo.style.cssText = 'width:48px;height:36px;min-width:48px;max-width:48px;overflow:hidden;background:#eef1f5 center/cover no-repeat';
           if (p.primary_image) {
-            const img = document.createElement('img');
-            img.src = p.primary_image;
-            img.alt = '';
-            photo.appendChild(img);
+            photo.style.backgroundImage = `url(${JSON.stringify(p.primary_image)})`;
           }
           const mid = document.createElement('div');
           mid.className = 'unit-copy';
